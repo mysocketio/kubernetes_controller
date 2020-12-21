@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mysocket
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysocket
+  namespace: mysocket
+type: Opaque
+data:
+  email: UPDATE WITH YOUR MYSOCKET LOGIN BASE64 ENCODED
+  password: UPDATE WITH YOUR MYSOCKET PASSWORD  BASE64 ENCODED
+  privatekey: UPDATE WITH YOUR MYSOCKET PRIVATE KEY  BASE64 ENCODED
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysocketd
+  namespace: mysocket
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mysocketd
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["list","watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mysocketd
+subjects:
+- kind: ServiceAccount
+  name: mysocketd
+  namespace: mysocket
+roleRef:
+  kind: ClusterRole
+  name: mysocketd
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysocketd
+  namespace: mysocket
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysocketd
+  template:
+    metadata:
+      labels:
+        app: mysocketd
+    spec:
+      serviceAccount: mysocketd
+      containers:
+      - name: mysocketd
+        image: mysocket/mysocketd:latest
+        args:
+          - '-l'
+          - 'info'
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: mysocket
+          mountPath: "/etc/mysocket"
+        - name: sshkey
+          mountPath: "/root/.ssh"
+      volumes:
+      - name: mysocket
+        secret:
+          secretName: mysocket
+      - name: sshkey
+        secret:
+          secretName: mysocket
+          items:
+          - key: privatekey
+            path: id_rsa
+            mode: 0600
+
