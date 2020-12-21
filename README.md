@@ -1,2 +1,2 @@
 # kubernetes_controller
-Kubernetes controller for Mysocket.io!
+Kubernetes controller for Mysocket.io
