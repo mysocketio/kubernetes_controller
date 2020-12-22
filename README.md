@@ -8,7 +8,7 @@ Then deploy the controller:
 ```kubectl apply -f mysocketd.yaml```
 
 
-Thinsg to keep in mind:
+Things to keep in mind:
 This is an MVP, it currently has the following know limitations:
 
 1) only one contoller pod is running at a time. 
