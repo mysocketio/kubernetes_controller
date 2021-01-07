@@ -1,5 +1,6 @@
 # kubernetes_controller
 Kubernetes controller for Mysocket.io
+For details, also see this blog https://www.mysocket.io/post/global-load-balancing-with-kubernetes-and-mysocket
 
 Make sure to update line 14,15 and 16 of mysocketd.yaml with the correct mysocket credentials. 
 
